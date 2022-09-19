@@ -94,7 +94,11 @@ ConsoleTest (const char *in, const char *out)
 #ifdef CHANGED
           readAvail->P ();        // wait for character to arrive
           ch = console->RX ();
+          console->TX ('<');        // echo it!
+          writeDone->P ();        // wait for write to finish
           console->TX (ch);        // echo it!
+          writeDone->P ();        // wait for write to finish
+          console->TX ('>');        // echo it!
           writeDone->P ();        // wait for write to finish
           if (ch == 'q') {
               printf("Au revoir\n");

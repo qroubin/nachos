@@ -25,11 +25,15 @@ ConsoleDriver::~ConsoleDriver()
 }
 void ConsoleDriver::PutChar(int ch)
 {
-    // ...
+    writeDone->P ();    // wait for write to finish
+    console->TX (ch);   // echo it!
 }
 int ConsoleDriver::GetChar()
 {
-    // ...
+    char ch;
+    readAvail->P ();        // wait for character to arrive
+    ch = console->RX ();
+    return ch;
 }
 void ConsoleDriver::PutString(const char *s)
 {

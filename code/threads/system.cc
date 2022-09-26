@@ -222,7 +222,7 @@ Cleanup ()
         scheduler->Stop();
     if (interrupt)
         interrupt->Enable();
-
+    
 #ifdef NETWORK
     if (postOffice) {
         delete postOffice;
@@ -231,6 +231,9 @@ Cleanup ()
 #endif
 
 #ifdef USER_PROGRAM
+#ifdef CHANGED
+    delete consoledriver;
+#endif
     if (machine) {
         delete machine;
         machine = NULL;

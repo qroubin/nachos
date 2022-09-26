@@ -119,7 +119,7 @@ main (int argc, char **argv)
             {                        // run a user program
                 ASSERT_MSG (argc > 1, "-x needs a program name\n");
                 #ifdef CHANGED
-                ConsoleDriver *consoleDriver = new ConsoleDriver(NULL, NULL);
+                consoledriver = new ConsoleDriver(NULL, NULL);
                 #endif // CHANGED
                 StartProcess (*(argv + 1));
                 argCount = 2;

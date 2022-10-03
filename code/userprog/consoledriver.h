@@ -22,6 +22,8 @@ class ConsoleDriver:dontcopythis {
         Console *console;
 };
 
+unsigned copyStringFromMachine(int from, char *to, unsigned size);
+
 #endif // CONSOLEDRIVER_H
 
 #endif // CHANGED

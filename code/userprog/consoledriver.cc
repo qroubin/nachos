@@ -47,4 +47,17 @@ void ConsoleDriver::GetString(char *s, int n)
     // ...
 }
 
+unsigned copyStringFromMachine(int from, char *to, unsigned size)
+{
+    int c;
+    unsigned cpt;
+    for(cpt = 0; cpt<size; cpt++){
+        machine->ReadMem(from, 1, &c);
+        *(to+cpt) = c;
+    }
+    *(to+cpt) = '\0';
+    cpt++;
+    return cpt;
+}
+
 #endif // CHANGED

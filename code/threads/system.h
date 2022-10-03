@@ -56,4 +56,10 @@ extern ConsoleDriver *consoledriver;
 #endif
 #endif
 
+#ifdef CHANGED
+#ifdef USER_PROGRAM
+extern const unsigned MAX_STRING_SIZE;
+#endif
+#endif
+
 #endif // SYSTEM_H

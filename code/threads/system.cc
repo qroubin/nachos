@@ -275,3 +275,6 @@ Cleanup ()
 
     Exit (0);
 }
+
+
+const unsigned MAX_STRING_SIZE = 16;

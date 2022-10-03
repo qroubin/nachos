@@ -24,6 +24,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
+#include "consoledriver.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -90,6 +91,15 @@ ExceptionHandler (ExceptionType which)
                     consoledriver->PutChar(c);
                     break;
                   }
+                case SC_PutString:
+                 {
+                    DEBUG ('s', "PutString\n ");
+                    char* tmp = (char*) malloc((MAX_STRING_SIZE + 1) * sizeof(char));
+                    copyStringFromMachine(1, tmp, MAX_STRING_SIZE);
+                    consoledriver->PutString(tmp);
+                    free(tmp);
+                    break;
+                 }
                 #endif
                 default:
                   {

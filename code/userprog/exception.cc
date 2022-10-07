@@ -77,6 +77,20 @@ ExceptionHandler (ExceptionType which)
           {
             switch (type)
               {
+                case SC_Exit:
+                  {
+                    /*printf("Exit, return value = ");
+                    int r2 = machine->ReadRegister (2);
+                    if(r2 != NULL){
+                      printf((char*) r2);
+                    }else{
+                      printf("NULL");
+                    }
+                    printf("\n");*/
+                    DEBUG ('s', "Shutdown, initiated by user program.\n");
+                    interrupt->Powerdown ();
+                    break;
+                  }
                 case SC_Halt:
                   {
                     DEBUG ('s', "Shutdown, initiated by user program.\n");
@@ -92,14 +106,21 @@ ExceptionHandler (ExceptionType which)
                     break;
                   }
                 case SC_PutString:
-                 {
+                  {
                     DEBUG ('s', "PutString\n ");
                     char* tmp = (char*) malloc(MAX_STRING_SIZE * sizeof(char));
                     copyStringFromMachine(1, tmp, MAX_STRING_SIZE);
                     consoledriver->PutString(tmp);
                     if (tmp != NULL) free(tmp);
                     break;
-                 }
+                  }
+                case SC_GetChar:
+                  {
+                    DEBUG ('s', "GetChar\n ");
+                    int c = consoledriver->GetChar();
+                    machine->WriteRegister(2, c);
+                    break;
+                  }
                 #endif
                 default:
                   {

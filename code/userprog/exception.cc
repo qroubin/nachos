@@ -94,10 +94,10 @@ ExceptionHandler (ExceptionType which)
                 case SC_PutString:
                  {
                     DEBUG ('s', "PutString\n ");
-                    char* tmp = (char*) malloc((MAX_STRING_SIZE + 1) * sizeof(char));
+                    char* tmp = (char*) malloc(MAX_STRING_SIZE * sizeof(char));
                     copyStringFromMachine(1, tmp, MAX_STRING_SIZE);
                     consoledriver->PutString(tmp);
-                    free(tmp);
+                    if (tmp != NULL) free(tmp);
                     break;
                  }
                 #endif

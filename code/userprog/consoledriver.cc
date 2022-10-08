@@ -44,7 +44,21 @@ void ConsoleDriver::PutString(const char *s)
 }
 void ConsoleDriver::GetString(char *s, int n)
 {
-    // ...
+    uint index = 0;
+    char c;
+    while(index < n-1){
+        c = (int) GetChar();
+        if (c == EOF){
+            break;
+        }
+        *(s + index) = c;
+        if (c == '\n'){
+            index++;
+            break;
+        }
+        index++;
+    }
+    *(s + index) = '\0';
 }
 
 unsigned copyStringFromMachine(int from, char *to, unsigned size)
@@ -58,6 +72,19 @@ unsigned copyStringFromMachine(int from, char *to, unsigned size)
     }
     if (cpt >= size){
         *(to+cpt) = '\0';
+    }
+    return cpt;
+}
+
+unsigned copyStringToMachine(char* from, int to, unsigned size)
+{
+    uint cpt = 0;
+    for (uint i = 0; i < size; i++){
+        if (from + i != NULL)
+        {
+            machine -> WriteMem(to, 1, *(from + i));
+            if (*(from + i) == '\0') break;
+        }
     }
     return cpt;
 }

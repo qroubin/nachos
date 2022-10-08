@@ -23,6 +23,7 @@ class ConsoleDriver:dontcopythis {
 };
 
 unsigned copyStringFromMachine(int from, char *to, unsigned size);
+unsigned copyStringToMachine(char* from, int to, unsigned size);
 
 #endif // CONSOLEDRIVER_H
 

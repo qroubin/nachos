@@ -79,14 +79,8 @@ ExceptionHandler (ExceptionType which)
               {
                 case SC_Exit:
                   {
-                    /*printf("Exit, return value = ");
-                    int r2 = machine->ReadRegister (2);
-                    if(r2 != NULL){
-                      printf((char*) r2);
-                    }else{
-                      printf("NULL");
-                    }
-                    printf("\n");*/
+                    int r2 = machine->ReadRegister (8);
+                    printf("Exit, return value = %d\n", r2);
                     DEBUG ('s', "Shutdown, initiated by user program.\n");
                     interrupt->Powerdown ();
                     break;
@@ -118,7 +112,17 @@ ExceptionHandler (ExceptionType which)
                   {
                     DEBUG ('s', "GetChar\n ");
                     int c = consoledriver->GetChar();
-                    machine->WriteRegister(2, c);
+                    if (c == EOF) ASSERT_MSG(FALSE, "End of file, no char read!");
+                    machine->WriteRegister(8, c); // r2 défini comme 8
+                    break;
+                  }
+                case SC_GetString:
+                  {
+                    DEBUG ('s', "GetString\n ");
+                    char* tmp = (char*) malloc(MAX_STRING_SIZE * sizeof(char));
+                    consoledriver->GetString(tmp, MAX_STRING_SIZE);
+                    copyStringToMachine(tmp, 1, MAX_STRING_SIZE);
+                    if (tmp != NULL) free(tmp);
                     break;
                   }
                 #endif

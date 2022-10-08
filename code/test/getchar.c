@@ -2,9 +2,8 @@
 
 void print()
 {
-    char* s = "Hello world!";
-    GetString(s, 13);
-    PutString(s);
+    int c = GetChar();
+    PutChar(c);
 }
 
 int main()

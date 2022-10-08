@@ -1,14 +1,12 @@
 #include "syscall.h"
 
-void print()
+void print(char* c)
 {
-    //char* string = "Hello world";
-    PutString("Hello world");
-    //PutChar('\n');
+    PutString(c);
 }
 
 int main()
 {
-    print();
-    Halt();
+    print("Hello world");
+    //Halt();
 }

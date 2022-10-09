@@ -95,7 +95,7 @@ ExceptionHandler (ExceptionType which)
                 case SC_PutChar:
                   {
                     DEBUG ('s', "PutChar\n ");
-                    int c = machine->ReadRegister(4);
+                    int c = machine->ReadRegister(16);
                     consoledriver->PutChar(c);
                     break;
                   }
@@ -113,7 +113,7 @@ ExceptionHandler (ExceptionType which)
                     DEBUG ('s', "GetChar\n ");
                     int c = consoledriver->GetChar();
                     if (c == EOF) ASSERT_MSG(FALSE, "End of file, no char read!");
-                    machine->WriteRegister(8, c); // r2 défini comme 8
+                    machine->WriteRegister(16, c); // r2 défini comme 8
                     break;
                   }
                 case SC_GetString:
@@ -124,6 +124,16 @@ ExceptionHandler (ExceptionType which)
                     copyStringToMachine(tmp, 1, MAX_STRING_SIZE);
                     if (tmp != NULL) free(tmp);
                     break;
+                  }
+                case SC_PutInt:
+                  {
+                    // la fonction est une version spécifique de PutString,
+                    // du coup elle n'a pas vraiment besoin d'un appel système
+                    // vu qu'elle utilise déjà ceux de snprintf et de PutString
+                  }
+                case SC_GetInt:
+                  {
+                    // Idem pour GetString et sscanf
                   }
                 #endif
                 default:

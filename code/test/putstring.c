@@ -1,12 +1,12 @@
 #include "syscall.h"
 
-void print(char* c)
+void testPutString(char* c)
 {
-    PutString(c);
+    PutString(c);   //on affiche la chaine à l'écran
 }
 
 int main()
 {
-    print("Hello world");
+    testPutString("Hello world");   //on veut afficher "Hello world"
     //Halt();
 }

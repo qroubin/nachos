@@ -61,6 +61,20 @@ void ConsoleDriver::GetString(char *s, int n)
     *(s + index) = '\0';
 }
 
+void ConsoleDriver::PutInt(int n)
+{
+    char buffer[10];
+    snprintf(buffer, 9, "%d", n);
+    PutString(buffer);
+}
+
+void ConsoleDriver::GetInt(int* n)
+{
+    char buffer[10];
+    GetString(buffer, 10);
+    sscanf(buffer, "%d", n);
+}
+
 unsigned copyStringFromMachine(int from, char *to, unsigned size)
 {
     int res;

@@ -1,13 +1,13 @@
 #include "syscall.h"
 
-void print()
+void testGetChar()
 {
-    int c = GetChar();
-    PutChar(c);
+    int c = GetChar(); //on récupère le caractère de l'utilisateur
+    PutChar(c); //on l'affiche à l'écran
 }
 
 int main()
 {
-    print();
+    testGetChar();
     //Halt();
 }

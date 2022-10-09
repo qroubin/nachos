@@ -127,13 +127,17 @@ ExceptionHandler (ExceptionType which)
                   }
                 case SC_PutInt:
                   {
-                    // la fonction est une version spécifique de PutString,
-                    // du coup elle n'a pas vraiment besoin d'un appel système
-                    // vu qu'elle utilise déjà ceux de snprintf et de PutString
+                    DEBUG ('s', "PutInt\n ");
+                    int n = machine->ReadRegister(4);
+                    consoledriver->PutInt(n);
+                    break;
                   }
                 case SC_GetInt:
                   {
-                    // Idem pour GetString et sscanf
+                    DEBUG ('s', "GetInt\n ");
+                    int* n;
+                    consoledriver->GetInt(n);
+                    break;
                   }
                 #endif
                 default:

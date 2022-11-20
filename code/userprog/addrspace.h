@@ -21,6 +21,8 @@
 
 #define UserStacksAreaSize		1024	// increase this as necessary!
 
+class Semaphore;
+
 class AddrSpace:public dontcopythis
 {
   public:
@@ -41,11 +43,21 @@ class AddrSpace:public dontcopythis
                                 // Dump program layout as SVG
     unsigned NumPages(void) { return numPages; }
 
+    int AllocateUserStack(void);
+
+    void semNewThread();
+    int getNbThreads();
+    int semRemThread();
+
   private:
     NoffHeader noffH;           // Program layout
 
     TranslationEntry * pageTable; // Page table
     unsigned int numPages;      // Number of pages in the page table
+
+    Semaphore * mutex;
+    int nbThreads;
+    int lastUserStackAddress;
 };
 
 extern List AddrspaceList;

@@ -25,6 +25,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "consoledriver.h"
+#include "userthread.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -79,6 +80,11 @@ ExceptionHandler (ExceptionType which)
               {
                 case SC_Exit:
                   {
+                    /*while(...)
+                    {
+                      currentThread->Yield();
+                      interrupt->Powerdown();
+                    }*/
                     int r2 = machine->ReadRegister (8);
                     printf("Exit, return value = %d\n", r2);
                     DEBUG ('s', "Shutdown, initiated by user program.\n");
@@ -95,7 +101,7 @@ ExceptionHandler (ExceptionType which)
                 case SC_PutChar:
                   {
                     DEBUG ('s', "PutChar\n ");
-                    int c = machine->ReadRegister(16);
+                    int c = machine->ReadRegister(4);
                     consoledriver->PutChar(c);
                     break;
                   }
@@ -113,7 +119,7 @@ ExceptionHandler (ExceptionType which)
                     DEBUG ('s', "GetChar\n ");
                     int c = consoledriver->GetChar();
                     if (c == EOF) ASSERT_MSG(FALSE, "End of file, no char read!");
-                    machine->WriteRegister(16, c); // r2 défini comme 8
+                    machine->WriteRegister(2, c);
                     break;
                   }
                 case SC_GetString:
@@ -137,6 +143,17 @@ ExceptionHandler (ExceptionType which)
                     DEBUG ('s', "GetInt\n ");
                     int* n;
                     consoledriver->GetInt(n);
+                    break;
+                  }
+                case SC_ThreadCreate:
+                  {
+                    DEBUG ('b', "SC_ThreadCreate : %d , %d\n", machine->ReadRegister(4), machine->ReadRegister(5));
+                    do_ThreadCreate(machine->ReadRegister(4), machine->ReadRegister(5));
+                    break;
+                  }
+                case SC_ThreadExit:
+                  {
+                    do_ThreadExit();
                     break;
                   }
                 #endif

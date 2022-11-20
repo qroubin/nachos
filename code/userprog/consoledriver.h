@@ -6,6 +6,7 @@
 #include "copyright.h"
 #include "utility.h"
 #include "console.h"
+#include "synch.h"
 
 class ConsoleDriver:dontcopythis {
     public:
@@ -23,6 +24,7 @@ class ConsoleDriver:dontcopythis {
     void GetInt(int* n);
     private:
         Console *console;
+        Semaphore *getPutChar;
 };
 
 unsigned copyStringFromMachine(int from, char *to, unsigned size);

@@ -21,6 +21,7 @@
 #include "noff.h"
 #include "syscall.h"
 #include "new"
+#include "synch.h"
 
 //----------------------------------------------------------------------
 // SwapHeader
@@ -129,6 +130,9 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable[0].valid = FALSE;			// Catch NULL dereference
 
     AddrSpaceList.Append(this);
+
+    mutex = new Semaphore("mutex on numbers of threads on space", 1);
+    nbThreads = 1; //compte le main
 }
 
 //----------------------------------------------------------------------
@@ -292,3 +296,56 @@ AddrSpace::RestoreState ()
     machine->currentPageTable = pageTable;
     machine->currentPageTableSize = numPages;
 }
+
+int
+AddrSpace::AllocateUserStack ()
+{
+    return numPages * PageSize - 16 - 256;
+}
+
+//tentative d'une version allouant une pile différente pour chaque thread
+/*int
+AddrSpace::AllocateUserStack ()
+{
+    lastUserStackAddress -= 256;
+    return lastUserStackAddress;
+}*/
+
+
+#ifdef CHANGED
+
+void AddrSpace::semNewThread()
+{
+    mutex->P();
+    nbThreads += 1;
+    mutex->V();
+}
+
+int AddrSpace::getNbThreads()
+{
+    return this->nbThreads;
+}
+
+int AddrSpace::semRemThread()
+{
+    mutex->P();
+    nbThreads -= 1;
+    int tmp = nbThreads;
+    mutex->V();
+    return tmp;
+}
+
+/*static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
+int numBytes, int position, TranslationEntry *pageTable,
+unsigned numPages)
+{
+    char* tmp = malloc(numBytes);
+    executable->ReadAt (tmp, numBytes, position);
+    for (int i = 0; i < numBytes; i++)
+    {
+        WriteMem(virtualaddr+i, 1, tmp[i]);
+    }
+    
+}*/
+
+#endif //CHANGED

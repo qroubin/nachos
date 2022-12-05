@@ -52,6 +52,28 @@ SwapHeader (NoffHeader * noffH)
 //----------------------------------------------------------------------
 List AddrSpaceList;
 
+static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
+int numBytes, int position, TranslationEntry *pageTable,
+unsigned numPages)
+{
+    char* tmp = (char*) malloc(numBytes);
+    executable->ReadAt (tmp, numBytes, position);
+    TranslationEntry *oldPageTable = machine->currentPageTable;
+    unsigned oldNumPages = machine->currentPageTableSize;
+    machine->currentPageTable = pageTable;
+    machine->currentPageTableSize = numPages;
+
+    for (int i = 0; i < numBytes; i++)
+    {
+        machine->WriteMem(virtualaddr+i, 1, tmp[i]);
+    }
+
+    machine->currentPageTable = oldPageTable;
+    machine->currentPageTableSize = oldNumPages;
+
+    free(tmp);
+}
+
 //----------------------------------------------------------------------
 // AddrSpace::AddrSpace
 //      Create an address space to run a user program.
@@ -95,9 +117,14 @@ AddrSpace::AddrSpace (OpenFile * executable)
            numPages, size);
 // first, set up the translation
     pageTable = new TranslationEntry[numPages];
+    pageProvider = new PageProvider(NumPhysPages);
     for (i = 0; i < numPages; i++)
       {
-          pageTable[i].physicalPage = i;        // for now, phys page # = virtual page #
+          //pageTable[i].physicalPage = i;        // for now, phys page # = virtual page #
+          //pageTable[i].physicalPage = i+1;      // maintenant, on fait phys page # = virtual page # +1
+          int emptyPage = pageProvider->GetEmptyPage(); //enfin, on utilise pageProvider pour récupérer une page physique libre
+          ASSERT(emptyPage != -1);
+          pageTable[i].physicalPage = emptyPage;
           pageTable[i].valid = TRUE;
           pageTable[i].use = FALSE;
           pageTable[i].dirty = FALSE;
@@ -111,17 +138,21 @@ AddrSpace::AddrSpace (OpenFile * executable)
       {
           DEBUG ('a', "Initializing code segment, at 0x%x, size 0x%x\n",
                  noffH.code.virtualAddr, noffH.code.size);
-          executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
-                              noffH.code.size, noffH.code.inFileAddr);
+          /*executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
+                              noffH.code.size, noffH.code.inFileAddr);*/
+        ReadAtVirtual (executable, noffH.code.virtualAddr,
+                            noffH.code.size, noffH.code.inFileAddr, pageTable, numPages);
       }
     if (noffH.initData.size > 0)
       {
           DEBUG ('a', "Initializing data segment, at 0x%x, size 0x%x\n",
                  noffH.initData.virtualAddr, noffH.initData.size);
-          executable->ReadAt (&
+          /*executable->ReadAt (&
                               (machine->mainMemory
                                [noffH.initData.virtualAddr]),
-                              noffH.initData.size, noffH.initData.inFileAddr);
+                              noffH.initData.size, noffH.initData.inFileAddr);*/
+        ReadAtVirtual (executable, noffH.initData.virtualAddr,
+                            noffH.initData.size, noffH.initData.inFileAddr, pageTable, numPages);
       }
 
     DEBUG ('a', "Area for stacks at 0x%x, size 0x%x\n",
@@ -133,6 +164,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
     mutex = new Semaphore("mutex on numbers of threads on space", 1);
     nbThreads = 1; //compte le main
+    machine->DumpMem("addrspace.svg");
 }
 
 //----------------------------------------------------------------------
@@ -142,6 +174,11 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
+  unsigned int i;
+  for (i = 0; i < numPages; i++)
+  {
+    pageProvider->ReleasePage(pageTable[i].physicalPage);
+  }
   delete [] pageTable;
   pageTable = NULL;
 
@@ -335,17 +372,6 @@ int AddrSpace::semRemThread()
     return tmp;
 }
 
-/*static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
-int numBytes, int position, TranslationEntry *pageTable,
-unsigned numPages)
-{
-    char* tmp = malloc(numBytes);
-    executable->ReadAt (tmp, numBytes, position);
-    for (int i = 0; i < numBytes; i++)
-    {
-        WriteMem(virtualaddr+i, 1, tmp[i]);
-    }
-    
-}*/
+
 
 #endif //CHANGED

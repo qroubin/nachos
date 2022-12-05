@@ -18,6 +18,7 @@
 #include "translate.h"
 #include "noff.h"
 #include "list.h"
+#include "pageprovider.h"
 
 #define UserStacksAreaSize		1024	// increase this as necessary!
 
@@ -58,6 +59,8 @@ class AddrSpace:public dontcopythis
     Semaphore * mutex;
     int nbThreads;
     int lastUserStackAddress;
+
+    PageProvider *pageProvider;
 };
 
 extern List AddrspaceList;
